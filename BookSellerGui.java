@@ -14,17 +14,17 @@ public class BookSellerGui extends JFrame {
 
         JPanel panel = new JPanel();
         panel.setLayout(new GridLayout(2, 2));
-        panel.add(new JLabel("Book title:"));
+        panel.add(new JLabel("Title:"));
         titleField = new JTextField(15);
         panel.add(titleField);
-        panel.add(new JLabel("Price:"));
+        panel.add(new JLabel("Book price:"));
         priceField = new JTextField(15);
         panel.add(priceField);
         getContentPane().add(panel, BorderLayout.CENTER);
 
-        JButton addButton = new JButton("Add");
+        JButton addButton = new JButton("Put");
         addButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent ev) {
+            public void actionPerformed(ActionEvent actionEvent) {
                 try {
                     String title = titleField.getText().trim();
                     String price = priceField.getText().trim();
@@ -41,7 +41,7 @@ public class BookSellerGui extends JFrame {
         getContentPane().add(panel, BorderLayout.SOUTH);
 
         addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent event) {
+            public void windowClosing(WindowEvent e) {
                 myAgent.doDelete();
             }
         });
@@ -52,9 +52,9 @@ public class BookSellerGui extends JFrame {
     public void show() {
         pack();
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        int centerX = (int) screenSize.getWidth() / 3;
-        int centerY = (int) screenSize.getHeight() / 3;
-        setLocation(centerX - getWidth() / 3, centerY - getHeight() / 3);
+        int centerX = (int) screenSize.getWidth() / 2;
+        int centerY = (int) screenSize.getHeight() / 2;
+        setLocation(centerX - getWidth() / 2, centerY - getHeight() / 2);
         super.show();
     }
 }

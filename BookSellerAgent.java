@@ -19,16 +19,16 @@ public class BookSellerAgent extends Agent {
         myGui = new BookSellerGui(this);
         myGui.show();
 
-        DFAgentDescription dfAgentDescription = new DFAgentDescription();
-        dfAgentDescription.setName(getAID());
-        ServiceDescription serviceDescription = new ServiceDescription();
-        serviceDescription.setType("book-selling");
-        serviceDescription.setName("JADE-book-trading");
-        dfAgentDescription.addServices(serviceDescription);
+        DFAgentDescription dfd = new DFAgentDescription();
+        dfd.setName(getAID());
+        ServiceDescription sd = new ServiceDescription();
+        sd.setType("book-selling");
+        sd.setName("JADE-book-trading");
+        dfd.addServices(sd);
         try {
-            DFService.register(this, dfAgentDescription);
-        } catch (FIPAException fipaException) {
-            fipaException.printStackTrace();
+            DFService.register(this, dfd);
+        } catch (FIPAException fe) {
+            fe.printStackTrace();
         }
 
         addBehaviour(new OfferRequestsServer());
@@ -39,8 +39,8 @@ public class BookSellerAgent extends Agent {
     protected void takeDown() {
         try {
             DFService.deregister(this);
-        } catch (FIPAException fipaException) {
-            fipaException.printStackTrace();
+        } catch (FIPAException fe) {
+            fe.printStackTrace();
         }
 
         myGui.dispose();
@@ -51,18 +51,18 @@ public class BookSellerAgent extends Agent {
         addBehaviour(new OneShotBehaviour() {
             public void action() {
                 catalogue.put(title, price);
-                System.out.println(title + " inserted into catalogue. Price = " + price);
+                System.out.println(title + " is in catalogue. Book price = " + price);
             }
         });
     }
 
     private class OfferRequestsServer extends CyclicBehaviour {
         public void action() {
-            MessageTemplate messageTemplate = MessageTemplate.MatchPerformative(ACLMessage.CFP);
-            ACLMessage aclMessage = myAgent.receive(messageTemplate);
-            if (aclMessage != null) {
-                String title = aclMessage.getContent();
-                ACLMessage reply = aclMessage.createReply();
+            MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.CFP);
+            ACLMessage msg = myAgent.receive(mt);
+            if (msg != null) {
+                String title = msg.getContent();
+                ACLMessage reply = msg.createReply();
 
                 Integer price = (Integer) catalogue.get(title);
                 if (price != null) {
@@ -81,16 +81,16 @@ public class BookSellerAgent extends Agent {
 
     private class PurchaseOrdersServer extends CyclicBehaviour {
         public void action() {
-            MessageTemplate messageTemplate = MessageTemplate.MatchPerformative(ACLMessage.ACCEPT_PROPOSAL);
-            ACLMessage aclMessage = myAgent.receive(messageTemplate);
-            if (aclMessage != null) {
-                String title = aclMessage.getContent();
-                ACLMessage reply = aclMessage.createReply();
+            MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.ACCEPT_PROPOSAL);
+            ACLMessage msg = myAgent.receive(mt);
+            if (msg != null) {
+                String title = msg.getContent();
+                ACLMessage reply = msg.createReply();
 
                 Integer price = (Integer) catalogue.remove(title);
                 if (price != null) {
                     reply.setPerformative(ACLMessage.INFORM);
-                    System.out.println(title + " sold to agent " + aclMessage.getSender().getName());
+                    System.out.println(title + " sold to agent " + msg.getSender().getName());
                 } else {
                     reply.setPerformative(ACLMessage.FAILURE);
                     reply.setContent("not-available");

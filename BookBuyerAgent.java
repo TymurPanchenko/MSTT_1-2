@@ -14,30 +14,30 @@ public class BookBuyerAgent extends Agent {
     private AID[] sellerAgents;
 
     protected void setup() {
-        System.out.println("Hello! Buyer-agent " + getAID().getName() + " is ready.");
+        System.out.println("Hi! Agent1 " + getAID().getName() + " is ready for buying.");
 
         Object[] args = getArguments();
         if (args != null && args.length > 0) {
             targetBookTitle = (String) args[0];
-            System.out.println("Target book is " + targetBookTitle);
+            System.out.println("Target book - " + targetBookTitle);
 
             addBehaviour(new TickerBehaviour(this, 30000) {
                 protected void onTick() {
-                    System.out.println("Trying to buy " + targetBookTitle);
+                    System.out.println("I want to buy " + targetBookTitle);
                     DFAgentDescription template = new DFAgentDescription();
                     ServiceDescription sd = new ServiceDescription();
                     sd.setType("book-selling");
                     template.addServices(sd);
                     try {
                         DFAgentDescription[] result = DFService.search(myAgent, template);
-                        System.out.println("Found the following seller agents:");
+                        System.out.println("Found the following merchant agents:");
                         sellerAgents = new AID[result.length];
                         for (int i = 0; i < result.length; ++i) {
                             sellerAgents[i] = result[i].getName();
                             System.out.println(sellerAgents[i].getName());
                         }
-                    } catch (FIPAException fe) {
-                        fe.printStackTrace();
+                    } catch (FIPAException fipaException) {
+                        fipaException.printStackTrace();
                     }
 
                     myAgent.addBehaviour(new RequestPerformer());
@@ -57,7 +57,7 @@ public class BookBuyerAgent extends Agent {
         private AID bestSeller;
         private int bestPrice;
         private int repliesCnt = 0;
-        private MessageTemplate messageTemplate;
+        private MessageTemplate mt;
         private int step = 0;
 
         public void action() {
